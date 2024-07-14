@@ -29,10 +29,10 @@ async function generateUrlForSignature(pdfBuffer, recipientName) {
   const signer = new docusign.Signer();
   signer.name = recipientName;
   signer.recipientId = "1";
-  signer.clientUserId = "1000AB"; // This can be any unique identifier
-  //   signer.email = `${recipientName
-  //     .replace(/\s+/g, "")
-  //     .toLowerCase()}@example.com`;
+  signer.clientUserId = Math.random(); // This can be any unique identifier
+  signer.email = `${recipientName
+    .replace(/\s+/g, "")
+    .toLowerCase()}@example.com`;
 
   const signHere = new docusign.SignHere();
   signHere.documentId = "1";
@@ -65,7 +65,7 @@ async function generateUrlForSignature(pdfBuffer, recipientName) {
     viewRequest.authenticationMethod = "none";
     viewRequest.email = signer.email; // Use a dummy email
     viewRequest.userName = recipientName;
-    viewRequest.clientUserId = "1000AB"; // Must match the clientUserId in the envelope
+    viewRequest.clientUserId = signer.clientUserId; // Must match the clientUserId in the envelope
 
     const recipientView = await envelopesApi.createRecipientView(
       process.env.ACCOUNT_ID,
@@ -83,7 +83,7 @@ async function generateUrlForSignature(pdfBuffer, recipientName) {
         JSON.stringify(error.response.body, null, 2)
       );
     }
-    // throw error;
+    throw error;
   }
 }
 

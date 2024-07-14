@@ -7,6 +7,8 @@ const fs = require("fs");
 const session = require("express-session");
 const { generatePdfBuffer } = require("./pdfGeneration");
 const { generateUrlForSignature } = require("./generateUrlForSignature");
+const { checkEnvelopeStatus } = require("./checkEnvelopeStatus");
+const { retrieveSignedDocument } = require("./retrieveSignedDocument");
 
 dotenv.config();
 
@@ -33,6 +35,8 @@ app.get("/", async (req, res) => {
   res.send("HI!");
 });
 
+let envelopeId;
+
 app.get("/form", async (req, res) => {
   try {
     const token = await generateKey();
@@ -48,6 +52,8 @@ app.get("/form", async (req, res) => {
       throw new Error("Failed to generate signing URL");
     }
 
+    envelopeId = result.envelopeId;
+
     res.json({ url: result.url, envelopeId: result.envelopeId });
   } catch (error) {
     console.error("Error in /form route:", error);
@@ -56,6 +62,7 @@ app.get("/form", async (req, res) => {
 });
 
 app.get("/signing-complete", (req, res) => {
+  checkEnvelopeStatus(envelopeId);
   res.send("Thanks for adding your signature");
 });
 
