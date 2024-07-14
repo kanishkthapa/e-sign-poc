@@ -1,13 +1,23 @@
 {
   "name": "docusign",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "license": "MIT",
+  "scripts": {
+    "serve": "nodemon server.js"
+  },
   "dependencies": {
+    "axios": "^1.7.2",
     "docusign-esign": "^7.0.2",
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.2",
     "express": "^4.19.2",
+    "express-session": "^1.18.0",
     "handlebars": "^4.7.8",
     "hbs": "^4.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "jsrsasign": "^11.1.0",
+    "nodemon": "^3.1.4",
     "puppeteer": "^22.13.0"
   }
 }

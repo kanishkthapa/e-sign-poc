@@ -1,15 +1,18 @@
 const docusign = require("docusign-esign");
-const envelopesApi = require("./docusignSetup");
 const config = require("./config");
+const envelopesApi = require("./docusignSetup");
+const { getAccessToken } = require("./generateAccessToken");
 
-async function sendDocumentForSignature(
-  pdfBuffer,
-  recipientEmail,
-  recipientName,
-  pageNumber,
-  xPos,
-  yPos
-) {
+async function sendDocumentForSignature(pdfBuffer, recipientName) {
+  const accessToken = await getAccessToken();
+
+  const apiClient = new docusign.ApiClient();
+  apiClient.setBasePath(config.DOCUSIGN_BASE_URL);
+  apiClient.addDefaultHeader("Authorization", `Bearer ${accessToken}`);
+  docusign.Configuration.default.setDefaultApiClient(apiClient);
+
+  const envelopesApi = new docusign.EnvelopesApi(apiClient);
+
   const envelopeDefinition = new docusign.EnvelopeDefinition();
   envelopeDefinition.emailSubject = "Please sign this document";
 
@@ -22,17 +25,17 @@ async function sendDocumentForSignature(
   envelopeDefinition.documents = [document];
 
   const signer = new docusign.Signer();
-  signer.email = recipientEmail;
   signer.name = recipientName;
   signer.recipientId = "1";
+  signer.clientUserId = "1234"; // Unique identifier for the recipient
 
   const signHere = new docusign.SignHere();
   signHere.documentId = "1";
-  signHere.pageNumber = pageNumber; // Specify the page number
+  signHere.pageNumber = "1"; // Specify the 7th page
   signHere.recipientId = "1";
   signHere.tabLabel = "SignHereTab";
-  signHere.xPosition = xPos; // Specify the x-coordinate
-  signHere.yPosition = yPos; // Specify the y-coordinate
+  signHere.xPosition = "50"; // Specify the x-coordinate (bottom left)
+  signHere.yPosition = "750"; // Specify the y-coordinate (bottom left)
 
   signer.tabs = new docusign.Tabs();
   signer.tabs.signHereTabs = [signHere];
@@ -52,13 +55,11 @@ async function sendDocumentForSignature(
 
     // Create Recipient View
     const viewRequest = new docusign.RecipientViewRequest();
-
-    // Set the URL where you want the recipient to be redirected once they finish signing
-    viewRequest.returnUrl = "https://www.your-redirect-url.com";
-    viewRequest.authenticationMethod = "email";
-    viewRequest.email = recipientEmail;
+    viewRequest.returnUrl = "http://localhost:3000/";
+    viewRequest.authenticationMethod = "none";
+    viewRequest.email = "placeholder@example.com"; // Placeholder email
     viewRequest.userName = recipientName;
-    viewRequest.clientUserId = "1234"; // You can use any value here
+    viewRequest.clientUserId = "1234";
 
     const recipientView = await envelopesApi.createRecipientView(
       config.DOCUSIGN_ACCOUNT_ID,
@@ -67,7 +68,7 @@ async function sendDocumentForSignature(
     );
 
     console.log(`Recipient view URL: ${recipientView.url}`);
-    return recipientView.url;
+    return { url: recipientView.url, envelopeId };
   } catch (error) {
     console.error("Error creating envelope or recipient view:", error);
   }
