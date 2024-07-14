@@ -1,0 +1,13 @@
+{
+  "name": "docusign",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "docusign-esign": "^7.0.2",
+    "express": "^4.19.2",
+    "handlebars": "^4.7.8",
+    "hbs": "^4.2.0",
+    "puppeteer": "^22.13.0"
+  }
+}
