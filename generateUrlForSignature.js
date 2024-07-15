@@ -61,7 +61,7 @@ async function generateUrlForSignature(pdfBuffer, recipientName) {
 
     // Create Recipient View
     const viewRequest = new docusign.RecipientViewRequest();
-    viewRequest.returnUrl = "http://localhost:3000/signing-complete";
+    viewRequest.returnUrl = process.env.REDIRECT_URL;
     viewRequest.authenticationMethod = "none";
     viewRequest.email = signer.email; // Use a dummy email
     viewRequest.userName = recipientName;

@@ -44,7 +44,7 @@ app.get("/form", async (req, res) => {
 
     const pdfBuffer = await generatePdfBuffer();
 
-    const recipientName = "Kanishk Thapa";
+    const recipientName = "Test Name";
 
     const result = await generateUrlForSignature(pdfBuffer, recipientName);
 
@@ -61,8 +61,8 @@ app.get("/form", async (req, res) => {
   }
 });
 
-app.get("/signing-complete", (req, res) => {
-  checkEnvelopeStatus(envelopeId);
+app.get("/signing-complete", async (req, res) => {
+  await checkEnvelopeStatus("eec1677b-4eed-4dfa-81ed-b44bdee859ad");
   res.send("Thanks for adding your signature");
 });
 

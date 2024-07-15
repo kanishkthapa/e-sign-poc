@@ -29,6 +29,8 @@ async function retrieveSignedDocument(envelopeId) {
     // Save or process the document as needed
     fs.writeFileSync(`signed_document_${envelopeId}.pdf`, pdfBytes);
     console.log(`Signed document saved for envelope ${envelopeId}`);
+
+    return pdfBytes;
   } catch (error) {
     console.error("Error retrieving signed document:", error);
   }
