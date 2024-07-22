@@ -1,5 +1,6 @@
 const docusign = require("docusign-esign");
 const { generateKey } = require("./generateAccessKey");
+const fs = require("fs");
 
 async function retrieveSignedDocument(envelopeId) {
   const dsApiClient = new docusign.ApiClient();
@@ -13,13 +14,16 @@ async function retrieveSignedDocument(envelopeId) {
   const envelopesApi = new docusign.EnvelopesApi(dsApiClient);
 
   try {
-    const documents = await envelopesApi.getDocuments(
+    const documents = await envelopesApi.listDocuments(
       process.env.ACCOUNT_ID,
       envelopeId
     );
 
-    // Assuming you want the combined document
-    const documentId = "combined";
+    console.log("Documents:", JSON.stringify(documents, null, 2));
+
+    // Get the first document or the combined document if available
+    const documentId = documents.envelopeDocuments[0].documentId;
+
     const pdfBytes = await envelopesApi.getDocument(
       process.env.ACCOUNT_ID,
       envelopeId,
@@ -33,6 +37,7 @@ async function retrieveSignedDocument(envelopeId) {
     return pdfBytes;
   } catch (error) {
     console.error("Error retrieving signed document:", error);
+    throw error;
   }
 }
 

@@ -14,13 +14,12 @@ async function generateUrlForSignature(pdfBuffer, recipientName) {
   const envelopesApi = new docusign.EnvelopesApi(dsApiClient);
 
   const envelopeDefinition = new docusign.EnvelopeDefinition();
-  console.log("CP-1");
 
-  envelopeDefinition.emailSubject = "Please sign this document";
+  envelopeDefinition.emailSubject = "Please sign your policy";
 
   const document = new docusign.Document();
   document.documentBase64 = pdfBuffer.toString("base64");
-  document.name = "Sample Document";
+  document.name = "Policy Document";
   document.fileExtension = "pdf";
   document.documentId = "1";
 
@@ -34,16 +33,24 @@ async function generateUrlForSignature(pdfBuffer, recipientName) {
     .replace(/\s+/g, "")
     .toLowerCase()}@example.com`;
 
-  const signHere = new docusign.SignHere();
-  signHere.documentId = "1";
-  signHere.pageNumber = "1";
-  signHere.recipientId = "1";
-  signHere.tabLabel = "SignHereTab";
-  signHere.xPosition = "50";
-  signHere.yPosition = "750";
+  const signHere1 = new docusign.SignHere();
+  signHere1.documentId = "1";
+  signHere1.pageNumber = "2";
+  signHere1.recipientId = "1";
+  signHere1.tabLabel = "SignHereTab1";
+  signHere1.xPosition = "50";
+  signHere1.yPosition = "750";
+
+  const signHere2 = new docusign.SignHere();
+  signHere2.documentId = "1";
+  signHere2.pageNumber = "20";
+  signHere2.recipientId = "1";
+  signHere2.tabLabel = "SignHereTab2";
+  signHere2.xPosition = "50";
+  signHere2.yPosition = "750";
 
   signer.tabs = new docusign.Tabs();
-  signer.tabs.signHereTabs = [signHere];
+  signer.tabs.signHereTabs = [signHere1, signHere2];
 
   envelopeDefinition.recipients = new docusign.Recipients();
   envelopeDefinition.recipients.signers = [signer];

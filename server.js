@@ -62,8 +62,15 @@ app.get("/form", async (req, res) => {
 });
 
 app.get("/signing-complete", async (req, res) => {
-  await checkEnvelopeStatus("eec1677b-4eed-4dfa-81ed-b44bdee859ad");
-  res.send("Thanks for adding your signature");
+  const retrievedDocument = await checkEnvelopeStatus(envelopeId);
+  // await forceRetrieveDocument(envelopeId);
+
+  // const retrievedPdf = await retrieveSignedDocument(envelopeId);
+
+  console.log("check retrieved document here", retrievedDocument);
+
+  res.set("Content-Type", "application/pdf");
+  res.send(retrievedDocument);
 });
 
 app.listen(3000, () => {

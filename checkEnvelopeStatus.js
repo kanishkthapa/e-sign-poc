@@ -45,7 +45,7 @@ async function checkEnvelopeStatus(envelopeId) {
 
     if (allSigned || envelope.status === "completed") {
       console.log("Attempting to retrieve signed document...");
-      await retrieveSignedDocument(envelopeId);
+      return await retrieveSignedDocument(envelopeId);
     }
   } catch (error) {
     console.error("Error checking envelope status:", error);
